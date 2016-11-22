@@ -10,12 +10,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.os.CancellationSignal;
-
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.annotation.TargetApi;
-
 
 
 /**
@@ -127,6 +122,9 @@ public class MovieProvider extends ContentProvider {
                 }
                 break;
             }
+
+
+
 
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
