@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -32,11 +32,23 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
 
+        final String    SQL_CREATE_FAVOURITE_MOVIE_TABLE = "CREATE TABLE " + MovieContract.FavouriteMovieEntry.TABLE_NAME + " (" +
+                MovieContract.FavouriteMovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.FavouriteMovieEntry.MOVIE_ID + " INTEGER NOT NULL, " +
+                MovieContract.FavouriteMovieEntry.COLUMN_TITLE + " TEXT UNIQUE NOT NULL, " +
+                MovieContract.FavouriteMovieEntry.COLUMN_DATE + " TEXT NOT NULL, "+
+                MovieContract.FavouriteMovieEntry.COLUMN_POSTER + " TEXT NOT NULL, "+
+                MovieContract.FavouriteMovieEntry.COLUMN_RATE + " REAL NOT NULL "+
+                " );";
+
+        db.execSQL(SQL_CREATE_FAVOURITE_MOVIE_TABLE);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP IF TABLE EXITS " + MovieContract.MovieEntry.TABLE_NAME);
+        db.execSQL("DROP IF TABLE EXITS " + MovieContract.FavouriteMovieEntry.TABLE_NAME);
         onCreate(db);
     }
 }

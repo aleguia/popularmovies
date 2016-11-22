@@ -27,6 +27,8 @@ public class MovieProvider extends ContentProvider {
     // Codes for the UriMatcher //////
     private static final int MOVIE = 100;
     private static final int MOVIE_WITH_ID = 200;
+    private static final int FAVOURITE_MOVIE = 300;
+    private static final int FAVOURITE_MOVIE_WITH_ID = 400;
     ////////
 
     private static UriMatcher buildUriMatcher(){
@@ -35,11 +37,14 @@ public class MovieProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
-        // add a code for each type of URI you want
         matcher.addURI(authority, MovieContract.MovieEntry.TABLE_NAME, MOVIE);
 
         //com.example.android.popularmovies.app.movie
         matcher.addURI(authority, MovieContract.MovieEntry.TABLE_NAME + "/#", MOVIE_WITH_ID);
+
+        matcher.addURI(authority,MovieContract.FavouriteMovieEntry.TABLE_NAME, MOVIE);
+
+        matcher.addURI(authority, MovieContract.FavouriteMovieEntry.TABLE_NAME + "/#", MOVIE_WITH_ID);
 
         return matcher;
     }
@@ -63,6 +68,15 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_WITH_ID:{
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             }
+
+            case FAVOURITE_MOVIE:{
+                return MovieContract.FavouriteMovieEntry.CONTENT_TYPE;
+            }
+
+            case FAVOURITE_MOVIE_WITH_ID:{
+                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+            }
+
             default:{
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -97,6 +111,33 @@ public class MovieProvider extends ContentProvider {
                         sortOrder);
                 return retCursor;
             }
+
+            case FAVOURITE_MOVIE: {
+
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.FavouriteMovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
+
+
+            case FAVOURITE_MOVIE_WITH_ID: {
+
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.FavouriteMovieEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.FavouriteMovieEntry._ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
             default: {
                 // By default, we assume a bad URI
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -123,8 +164,16 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-
-
+                case FAVOURITE_MOVIE: {
+                    long _id = db.insert(MovieContract.FavouriteMovieEntry.TABLE_NAME, null, values);
+                    // insert unless it is already contained in the database
+                    if (_id > 0) {
+                        returnUri = MovieContract.FavouriteMovieEntry.buildMovieUri(_id);
+                    } else {
+                        throw new SQLException("Failed to insert row into: " + uri);
+                    }
+                    break;
+            }
 
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -157,6 +206,15 @@ public class MovieProvider extends ContentProvider {
                         MovieContract.MovieEntry.TABLE_NAME + "'");
 
                 break;
+            case FAVOURITE_MOVIE_WITH_ID:
+            numDeleted = db.delete(MovieContract.FavouriteMovieEntry.TABLE_NAME,
+                    MovieContract.MovieEntry._ID + " = ?",
+                    new String[]{String.valueOf(ContentUris.parseId(uri))});
+            // reset _ID
+            db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+                    MovieContract.FavouriteMovieEntry.TABLE_NAME + "'");
+
+            break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
