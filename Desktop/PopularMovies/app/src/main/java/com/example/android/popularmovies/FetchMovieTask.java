@@ -150,7 +150,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
                     String poster_path;
                     String title;
-                    long release_date;
+                    String release_date;
                     double vote_average;
                     String overview;
                     int movie_db_id;
@@ -159,7 +159,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
                     poster_path = movie.getString(OWN_PATH);
                     title = movie.getString(OWM_TITLE);
-                    release_date = movie.getLong(OWM_RELEASE_DATE);
+                    release_date = movie.getString(OWM_RELEASE_DATE);
                     vote_average = movie.getDouble(OWM_RATE);
                     overview = movie.getString(OWM_OVERVIEW);
                     movie_db_id = movie.getInt(OWM_MOVIE_ID);
