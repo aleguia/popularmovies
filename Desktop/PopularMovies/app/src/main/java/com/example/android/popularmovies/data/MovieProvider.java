@@ -74,7 +74,7 @@ public class MovieProvider extends ContentProvider {
             }
 
             case FAVOURITE_MOVIE_WITH_ID:{
-                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+                return MovieContract.FavouriteMovieEntry.CONTENT_ITEM_TYPE;
             }
 
             default:{
@@ -97,7 +97,8 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                return retCursor;
+
+                break;
             }
             // Individual movie based on Id selected
             case MOVIE_WITH_ID: {
@@ -109,7 +110,8 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                return retCursor;
+
+                break;
             }
 
             case FAVOURITE_MOVIE: {
@@ -122,7 +124,8 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                return retCursor;
+
+                break;
             }
 
 
@@ -136,13 +139,17 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                return retCursor;
+
+                break;
             }
             default: {
                 // By default, we assume a bad URI
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
         }
+
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
 

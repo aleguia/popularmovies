@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
+import static java.security.AccessController.getContext;
 
 
 /**
@@ -174,6 +175,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
                     cVVector.add(movieValues);
                 }
+
+                mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+                Log.v(LOG_TAG,"se borró");
+
                 // add to database
                 if (cVVector.size() > 0) {
                     ContentValues[] cvArray = new ContentValues[cVVector.size()];

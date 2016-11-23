@@ -83,15 +83,9 @@ public class MovieContract {
 
         public static final String COLUMN_RATE = "vote_average";
 
-        //the order by setting that´s going to be sent to the api
-        public static final String ORDER_BY = "orderby";
 
         public static Uri buildMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
-        }
-
-        public static Uri buildMovieWithIdUri(long id){
-            return CONTENT_URI.buildUpon().appendPath(Long.toString(id)).build();
         }
     }
 }
