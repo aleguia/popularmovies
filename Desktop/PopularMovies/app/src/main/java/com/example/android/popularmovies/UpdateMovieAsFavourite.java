@@ -1,43 +1,77 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.LoaderManager;
 
 import com.example.android.popularmovies.data.MovieContract;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static java.security.AccessController.getContext;
 
 /**
- * Created by Fernando on 22/11/2016.
+ * Created by Fernando on 23/11/2016.
  */
 
-public class UpdateMovieAsFavourite extends AsyncTask<Void,Void,Void>  {
 
+public class UpdateMovieAsFavourite extends AsyncTask<Void, Void, Void> {
 
+    private Movie mMovie;
+    private Context mContext;
 
-
-
+    public UpdateMovieAsFavourite(Movie mMovie, Context mContext) {
+        this.mMovie = mMovie;
+        this.mContext = mContext;
+    }
 
     @Override
     protected Void doInBackground(Void... params) {
 
-        deleteOrSaveFovouriteMovie();
+        deleteOrSaveFavoriteMovie();
 
-    return null;}
+        return null;
+    }
 
-    private void deleteOrSaveFovouriteMovie(){
+    private void deleteOrSaveFavoriteMovie() {
 
 
+        Cursor cursor = mContext.getContentResolver().query(MovieContract.FavouriteMovieEntry.CONTENT_URI,
+                new String[]{MovieContract.FavouriteMovieEntry.MOVIE_ID},
+                MovieContract.FavouriteMovieEntry.MOVIE_ID + " = ?",
+                new String[]{String.valueOf(mMovie.getmOriginalId())},
+                null);
 
-        Cursor cursor = getContext().getContentResolver().query(MovieContract.FavouriteMovieEntry.CONTENT_URI,
-                        new String[]{MovieContract.FavouriteMovieEntry.MOVIE_ID},
-                        MovieContract.FavouriteMovieEntry.MOVIE_ID + " = ?",
-                        new String[]{String.valueOf()}
-                )
+        if (cursor.moveToFirst()) {
+            int rowDeleted = mContext.getContentResolver().delete(MovieContract.FavouriteMovieEntry.CONTENT_URI,
+                    MovieContract.FavouriteMovieEntry.MOVIE_ID + " = ?",
+                    new String[]{String.valueOf(mMovie.getmOriginalId())});
+
+            if (rowDeleted > 0) {
+
+            }
+        } else {
+
+            ContentValues values = new ContentValues();
+
+            values.put(MovieContract.FavouriteMovieEntry.MOVIE_ID, mMovie.getmOriginalId());
+            values.put(MovieContract.FavouriteMovieEntry.COLUMN_TITLE, mMovie.getmMovieImage());
+            values.put(MovieContract.FavouriteMovieEntry.COLUMN_DATE, mMovie.getmReleaseDate());
+            values.put(MovieContract.FavouriteMovieEntry.COLUMN_RATE, mMovie.getmRate());
+            values.put(MovieContract.FavouriteMovieEntry.COLUMN_POSTER, mMovie.getmMovieImage());
+
+            Uri insertedUri = mContext.getContentResolver().insert(
+                                MovieContract.FavouriteMovieEntry.CONTENT_URI,
+                                values);
+
+            long movieRowId = ContentUris.parseId(insertedUri);
+
+        }
+    cursor.close();
 
     }
+
+
 }
