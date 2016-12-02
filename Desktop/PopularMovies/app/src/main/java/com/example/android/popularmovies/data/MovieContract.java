@@ -52,6 +52,8 @@ public class MovieContract {
 
         public static final String COLUMN_RATE = "vote_average";
 
+        
+
 
         public static Uri buildMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
@@ -69,7 +71,7 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVOURITE_MOVIE;
         //Table name
-        public static final String TABLE_NAME = "movie";
+        public static final String TABLE_NAME = "favourite_movie";
 
         //The id column for movie table provided by theopenmoviedb
 
@@ -84,7 +86,11 @@ public class MovieContract {
         public static final String COLUMN_RATE = "vote_average";
 
 
-        public static Uri buildMovieUri(long id){
+        public static Uri buildFavoriteMovieUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        public static Uri buildOriginalFavoriteMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
     }

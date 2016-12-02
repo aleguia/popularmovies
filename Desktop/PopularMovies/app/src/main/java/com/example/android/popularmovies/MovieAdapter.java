@@ -46,4 +46,6 @@ public class MovieAdapter extends CursorAdapter {
                 .into(imageView);
 
     }
+
+
 }

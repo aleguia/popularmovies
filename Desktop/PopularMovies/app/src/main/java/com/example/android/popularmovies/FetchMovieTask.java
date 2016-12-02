@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.data.MovieContract;
 
@@ -38,11 +39,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         this.mContext = mContext;
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
+
 
     @Override
     protected Void doInBackground(String... params) {
@@ -56,7 +53,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
         // Will contain the raw JSON response as a string.
         String movieJsonStr = null;
-        if (isOnline()) {
+
             try {
                 // Construct the URL for the TheMovieDB query
 
@@ -117,10 +114,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     }
                 }
             }
-        }
-//            else{
-//                Toast.makeText( getContext(),"No connectivy available", Toast.LENGTH_SHORT).show();
-//            }
+
+
         return null ;
     }
 
@@ -176,7 +171,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     cVVector.add(movieValues);
                 }
 
-                mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+                mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
+                                                    null,
+                                                    null);
                 Log.v(LOG_TAG,"se borró");
 
                 // add to database

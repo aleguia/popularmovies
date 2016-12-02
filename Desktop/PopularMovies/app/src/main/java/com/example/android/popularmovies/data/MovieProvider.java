@@ -42,9 +42,9 @@ public class MovieProvider extends ContentProvider {
         //com.example.android.popularmovies.app.movie
         matcher.addURI(authority, MovieContract.MovieEntry.TABLE_NAME + "/#", MOVIE_WITH_ID);
 
-        matcher.addURI(authority,MovieContract.FavouriteMovieEntry.TABLE_NAME, MOVIE);
+        matcher.addURI(authority, MovieContract.FavouriteMovieEntry.TABLE_NAME, FAVOURITE_MOVIE);
 
-        matcher.addURI(authority, MovieContract.FavouriteMovieEntry.TABLE_NAME + "/#", MOVIE_WITH_ID);
+        matcher.addURI(authority, MovieContract.FavouriteMovieEntry.TABLE_NAME + "/#", FAVOURITE_MOVIE_WITH_ID);
 
         return matcher;
     }
@@ -175,7 +175,7 @@ public class MovieProvider extends ContentProvider {
                     long _id = db.insert(MovieContract.FavouriteMovieEntry.TABLE_NAME, null, values);
                     // insert unless it is already contained in the database
                     if (_id > 0) {
-                        returnUri = MovieContract.FavouriteMovieEntry.buildMovieUri(_id);
+                        returnUri = MovieContract.FavouriteMovieEntry.buildFavoriteMovieUri(_id);
                     } else {
                         throw new SQLException("Failed to insert row into: " + uri);
                     }
@@ -213,9 +213,19 @@ public class MovieProvider extends ContentProvider {
                         MovieContract.MovieEntry.TABLE_NAME + "'");
 
                 break;
+
+            case FAVOURITE_MOVIE:
+                numDeleted = db.delete(
+                        MovieContract.FavouriteMovieEntry.TABLE_NAME, selection, selectionArgs);
+                // reset _ID
+                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+                        MovieContract.FavouriteMovieEntry.TABLE_NAME + "'");
+                break;
+
+
             case FAVOURITE_MOVIE_WITH_ID:
             numDeleted = db.delete(MovieContract.FavouriteMovieEntry.TABLE_NAME,
-                    MovieContract.MovieEntry._ID + " = ?",
+                    MovieContract.FavouriteMovieEntry._ID + " = ?",
                     new String[]{String.valueOf(ContentUris.parseId(uri))});
             // reset _ID
             db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
